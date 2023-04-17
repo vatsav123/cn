@@ -1,0 +1,45 @@
+public static int calculateChecksum(byte[] bytes) {
+    int sum = 0;
+    for (int i = 0; i < bytes.length; i++) {
+        sum += bytes[i] & 0xff;
+    }
+    return sum;
+}
+
+// Open socket to listen for incoming data
+ServerSocket serverSocket = new ServerSocket(1234);
+Socket socket = serverSocket.accept();
+
+// Create input stream
+InputStream in = socket.getInputStream();
+
+// Read data into buffer
+byte[] buffer = new byte[1024];
+int bytesRead = in.read(buffer);
+
+// Separate data and checksum
+byte[] data = new byte[bytesRead - 2];
+byte[] checksumBytes = new byte[2];
+System.arraycopy(buffer, 0, data, 0, bytesRead - 2);
+System.arraycopy(buffer, bytesRead - 2, checksumBytes, 0, 2);
+
+// Calculate checksum
+int receivedChecksum = ((checksumBytes[0] & 0xff) << 8) | (checksumBytes[1] & 0xff);
+int calculatedChecksum = calculateChecksum(data);
+
+// Check if checksums match
+if (receivedChecksum == calculatedChecksum) {
+    // Data is valid, process it
+    String receivedData = new String(data);
+    System.out.println("Received data: " + receivedData);
+} else {
+ // Data is corrupted, discard it
+    System.err.println("Received data is corrupted!");
+}
+
+// Close socket and input stream
+in.close();
+socket.close();
+serverSocket.close();
+}
+}
