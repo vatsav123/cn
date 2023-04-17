@@ -1,0 +1,45 @@
+sender
+
+
+public class ChecksumSender {
+    public static void main(String[] args) {
+        String message = "Hello World"; // The message to be sent
+        byte[] bytes = message.getBytes(); // Get the bytes of the message
+        int checksum = 0; // Initialize the checksum value to zero
+        
+        for (byte b : bytes) {
+            checksum += b & 0xFF; // Add the byte value to the checksum
+        }
+        
+        checksum %= 256; // Modulo 256 to get the final checksum value
+        
+        System.out.println("Message: " + message);
+        System.out.println("Checksum: " + checksum);
+    }
+}
+
+--------------------------------
+receiver
+
+public class ChecksumReceiver {
+    public static void main(String[] args) {
+        String message = "Hello World"; // The message received
+        byte[] bytes = message.getBytes(); // Get the bytes of the message
+        int checksum = 0; // Initialize the checksum value to zero
+        
+        for (byte b : bytes) {
+            checksum += b & 0xFF; // Add the byte value to the checksum
+        }
+        
+        checksum %= 256; // Modulo 256 to get the final checksum value
+        
+        System.out.println("Message: " + message);
+        System.out.println("Checksum: " + checksum);
+        
+        if (checksum == 0) {
+            System.out.println("Checksum is valid");
+        } else {
+            System.out.println("Checksum is invalid");
+        }
+    }
+}
